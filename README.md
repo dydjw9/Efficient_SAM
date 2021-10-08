@@ -1,6 +1,6 @@
 # Efficient Sharpness-aware Minimization for Improved Training of Neural Networks
 
-Code for “Efficient Sharpness-aware Minimization for Improved Training of Neural Networks”
+Code for [“Efficient Sharpness-aware Minimization for Improved Training of Neural Networks”](http://arxiv.org/abs/2110.03141)
 
 
 ## Requisite
