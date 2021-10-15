@@ -33,7 +33,7 @@ optimizer = ESAM(paras, base_optimizer, rho=args.rho, weight_dropout=args.weight
 
 --gamma the SDS hyperparameter
 
-Druing training 
+During training 
 loss_fct should have reduction="none", to return instance-wise losses. 
 defined_backward is the function used for DDP and mixed precision backward
 
