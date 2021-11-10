@@ -1,5 +1,5 @@
-python -m torch.distributed.launch --nproc_per_node=4 train.py --beta 0.6 --gamma 0.5  --learning_rate 0.05 --weight_decay 1e-3  --rho 0.05 --name R18C10_01 --batch_size 64 --dataset cifar10
-#python -m torch.distributed.launch --nproc_per_node=4 train.py --beta 0.6 --gamma 0.5  --learning_rate 0.05 --weight_decay 1e-3  --rho 0.05 --name R18C100_01 --batch_size 64 --dataset cifar100
+#python -m torch.distributed.launch --nproc_per_node=2 train.py --beta 0.6 --gamma 0.5  --learning_rate 0.05 --weight_decay 1e-3  --rho 0.05 --name R18C10_01 --batch_size 64 --dataset cifar10
+python -m torch.distributed.launch --nproc_per_node=2 train.py --beta 0.6 --gamma 0.5  --learning_rate 0.05 --weight_decay 1e-3  --rho 0.05 --name R18C100_01 --batch_size 64 --dataset cifar100
 
 #python -m torch.distributed.launch --nproc_per_node=4 train.py --beta 0.5 --gamma 0.5  --learning_rate 0.05 --weight_decay 1e-3  --rho 0.1 --batch_size 64  --arch wideresnet18 --name wideC10 --dataset cifar10
 #python -m torch.distributed.launch --nproc_per_node=4 train.py --beta 0.5 --gamma 0.5  --learning_rate 0.05 --weight_decay 1e-3  --rho 0.1 --batch_size 64  --arch wideresnet18 --name wideC100 --dataset cifar100

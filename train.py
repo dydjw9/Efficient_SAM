@@ -6,8 +6,7 @@ from utils.cifar import Cifar,Cifar100
 from utils.log import Log
 from utils.initialize import initialize
 from utils.step_lr import StepLR
-import sys; sys.path.append("./utils")
-from layer_dp_sam import ESAM
+from utils.Esam import ESAM
 from torch.utils.tensorboard import SummaryWriter
 import os 
 from utils.mail import send_email
@@ -24,7 +23,6 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 
 logger = logging.getLogger(__name__)
 def train(args,model):
-    save_ten = torch.zeros([4,args.epochs*196])
 
     initialize(args, seed=42)
     device = args.device
@@ -41,7 +39,7 @@ def train(args,model):
 
     paras = model.parameters()
     base_optimizer = torch.optim.SGD(model.parameters(),lr=args.learning_rate,momentum=0.9,weight_decay=args.weight_decay)
-    optimizer = ESAM(paras, base_optimizer, rho=args.rho, weight_dropout=args.weight_dropout,adaptive=args.isASAM,nograd_cutoff=args.nograd_cutoff,opt_dropout = args.opt_dropout,temperature=args.temperature)
+    optimizer = ESAM(paras, base_optimizer, rho=args.rho, beta=args.beta,gamma=args.gamma,adaptive=args.isASAM,nograd_cutoff=args.nograd_cutoff)
     optimizer0 = optimizer.base_optimizer
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer0, T_max=args.epochs)
 
@@ -84,9 +82,7 @@ def train(args,model):
             paras = [inputs,targets,loss_fct,model,defined_backward]
             optimizer.paras = paras
             optimizer.step()
-            predictions,loss,g_fnc,l_b,l_a,l_bplus = optimizer.returnthings
-            for ind,ea in enumerate([l_b,l_a,l_bplus,g_fnc]):
-                save_ten[ind,global_step] = ea.cpu()
+            predictions,loss = optimizer.returnthings
 
 
  
@@ -101,10 +97,6 @@ def train(args,model):
             if  args.local_rank in [-1, 0]:
                 writer.add_scalar("train/loss", scalar_value=loss.mean(), global_step=global_step)
                 writer.add_scalar("train/acc", scalar_value=acc, global_step=global_step)
-                writer.add_scalar("curve/g_fnc", scalar_value=g_fnc, global_step=global_step)
-                writer.add_scalar("curve/l_before", scalar_value=l_b, global_step=global_step)
-                writer.add_scalar("curve/l_after", scalar_value=l_a, global_step=global_step)
-                writer.add_scalar("curve/l_b+", scalar_value=l_bplus, global_step=global_step)
 
         scheduler.step()
         if  args.local_rank in [-1, 0]:
@@ -130,7 +122,6 @@ def train(args,model):
                     model_to_save = model.module if hasattr(model, 'module') else model
                     torch.save(model_to_save.state_dict(),"../output/"+"%s_checkpoint.bin" %args.name)
                 writer.add_scalar("test/acc", scalar_value=tol_cor/(tol_len+0.0), global_step=global_step)
-    torch.save(save_ten,"../output/npy/"+args.name+"losses")
     if args.local_rank in [-1,0]:
         email_text = "training of {} finished, best acc is {}".format(args.name,best_acc) 
         send_email(email_text)
