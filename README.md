@@ -1,6 +1,6 @@
 # Efficient Sharpness-aware Minimization for Improved Training of Neural Networks
 
-Code for [“Efficient Sharpness-aware Minimization for Improved Training of Neural Networks”](http://arxiv.org/abs/2110.03141)
+Code for [“Efficient Sharpness-aware Minimization for Improved Training of Neural Networks”](https://openreview.net/forum?id=n0OeTdNRG0Q), which has been accepte by ICLR 2022. 
 
 
 ## Requisite
